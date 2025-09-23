@@ -991,42 +991,62 @@ const AuthorityApp = {
 
 // Authentication System
 const AuthSystem = {
-    loginTourist: (formData) => {
-        const tourist = {
-            id: Utils.generateId(),
-            name: formData.name,
-            phone: formData.phone,
-            email: formData.email,
-            emergencyContact: formData.emergencyContact,
-            location: { lat: 28.6139, lng: 77.2090 },
-            safetyScore: 85,
-            status: 'active'
-        };
-        
-        SampleData.tourists.push(tourist);
-        AppState.currentUser = tourist;
-        AppState.userType = 'tourist';
-        
-        return tourist;
-    },
+    
+loginTourist: async (formData) => {
+    try {
+        const response = await fetch("https://safetrip-backend-xzdb.onrender.com/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
 
-    loginAuthority: (officerID, department) => {
-        const authority = SampleData.authorities.find(a => 
-            a.officerID === officerID && a.department === department
-        );
-        
-        if (authority) {
-            AppState.currentUser = authority;
-            AppState.userType = 'authority';
-            return authority;
+        if (response.ok) {
+            AppState.currentUser = data.user;
+            AppState.userType = 'tourist';
+            return data.user;
+        } else {
+            NotificationSystem.show(data.message || "Login failed", "error");
+            AppState.userType = null;
+            AppState.currentLocation = null;
+            AppState.locationWatching = false;
+            showView('landingPage');
+            return null;
         }
-        
+    } catch (err) {
+        NotificationSystem.show("Server error, try again later", "error");
+        AppState.userType = null;
+        AppState.currentLocation = null;
+        AppState.locationWatching = false;
+        showView('landingPage');
         return null;
-    },
+    }
+},
 
     logout: () => {
         AppState.currentUser = null;
-        AppState.userType = null;
+ loginTourist: async (formData) => {
+    try {
+        const response = await fetch("https://safetrip-backend-xzdb.onrender.com/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            AppState.currentUser = data.user;
+            AppState.userType = 'tourist';
+            return data.user;
+        } else {
+            NotificationSystem.show(data.message || "Login failed", "error");
+            return null;
+        }
+    } catch (err) {
+        NotificationSystem.show("Server error, try again later", "error");
+        return null;
+    }
+ }       AppState.userType = null;
         AppState.currentLocation = null;
         AppState.locationWatching = false;
         
