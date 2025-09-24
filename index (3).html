@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeTrip - Smart Tourist Safety System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome View -->
+    <div id="welcomeView" class="welcome-container">
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="hero-header">
+                    <div class="logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <h1>SafeTrip</h1>
+                    </div>
+                    <p class="hero-subtitle">Smart Tourist Safety Monitoring & Incident Response System</p>
+                    <p class="hero-description">Your safety companion for secure and worry-free travel experiences</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Live Location Tracking</h3>
+                        <p>Real-time GPS monitoring and geo-fencing alerts</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Emergency SOS</h3>
+                        <p>Instant alert system for emergency situations</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-user-shield"></i>
+                        <h3>Authority Dashboard</h3>
+                        <p>Real-time monitoring and incident management</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Safety Scoring</h3>
+                        <p>Dynamic safety assessment based on location and time</p>
+                    </div>
+                </div>
+
+                <div class="cta-buttons">
+                    <button class="btn btn--primary" onclick="ModalSystem.show('loginModal')">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                    <button class="btn btn--secondary" onclick="ModalSystem.show('registerModal')">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-sign-in-alt"></i> Login</h3>
+                <button class="modal-close" onclick="ModalSystem.hide('loginModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginUserType">User Type:</label>
+                        <select id="loginUserType" name="userType" required>
+                            <option value="">Select User Type</option>
+                            <option value="tourist">Tourist</option>
+                            <option value="authority">Authority</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Don't have an account? 
+                    <a href="#" onclick="ModalSystem.hide('loginModal'); ModalSystem.show('registerModal')">Register here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Register</h3>
+                <button class="modal-close" onclick="ModalSystem.hide('registerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm" class="auth-form">
+                    <!-- Common Fields -->
+                    <div class="form-group">
+                        <label for="registerName">Full Name:</label>
+                        <input type="text" id="registerName" name="name" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email:</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPhone">Phone Number:</label>
+                        <input type="tel" id="registerPhone" name="phone" required 
+                               pattern="^\+91[6-9]\d{9}$" placeholder="+91XXXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password:</label>
+                        <input type="password" id="registerPassword" name="password" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerUserType">User Type:</label>
+                        <select id="registerUserType" name="userType" required onchange="toggleUserTypeFields()">
+                            <option value="">Select User Type</option>
+                            <option value="tourist">Tourist</option>
+                            <option value="authority">Authority</option>
+                        </select>
+                    </div>
+
+                    <!-- Tourist Specific Fields -->
+                    <div id="touristFields" class="user-type-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="emergencyContact">Emergency Contact:</label>
+                            <input type="tel" id="emergencyContact" name="emergencyContact" 
+                                   pattern="^\+91[6-9]\d{9}$" placeholder="+91XXXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label for="idType">ID Type:</label>
+                            <select id="idType" name="idType">
+                                <option value="">Select ID Type</option>
+                                <option value="aadhaar">Aadhaar</option>
+                                <option value="passport">Passport</option>
+                                <option value="driving_license">Driving License</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="idNumber">ID Number:</label>
+                            <input type="text" id="idNumber" name="idNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="nationality">Nationality:</label>
+                            <input type="text" id="nationality" name="nationality" value="Indian">
+                        </div>
+                    </div>
+
+                    <!-- Authority Specific Fields -->
+                    <div id="authorityFields" class="user-type-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="officerID">Officer ID:</label>
+                            <input type="text" id="officerID" name="officerID">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department:</label>
+                            <select id="department" name="department">
+                                <option value="">Select Department</option>
+                                <option value="Police Department">Police Department</option>
+                                <option value="Tourism Department">Tourism Department</option>
+                                <option value="Emergency Services">Emergency Services</option>
+                                <option value="Medical Department">Medical Department</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jurisdiction">Jurisdiction:</label>
+                            <input type="text" id="jurisdiction" name="jurisdiction">
+                        </div>
+                        <div class="form-group">
+                            <label for="rank">Rank:</label>
+                            <input type="text" id="rank" name="rank" value="Officer">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--full">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Already have an account? 
+                    <a href="#" onclick="ModalSystem.hide('registerModal'); ModalSystem.show('loginModal')">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appView" class="app-container" style="display: none;">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="header-content">
+                <!-- Tourist Header -->
+                <div id="touristHeader" class="user-info" style="display: none;">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h3 id="userName">Loading...</h3>
+                        <p class="safety-score">Safety Score: <span id="safetyScoreHeader" class="score-value">--</span></p>
+                    </div>
+                </div>
+
+                <!-- Authority Header -->
+                <div id="authorityHeader" class="authority-info authority-header" style="display: none;">
+                    <div class="authority-avatar">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="authority-details">
+                        <h3 id="authorityName">Loading...</h3>
+                        <p id="authorityDept">Authority Department</p>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="header-actions">
+                    <div class="alert-counter">
+                        <i class="fas fa-bell"></i>
+                        <span id="alertsBadge" class="badge hidden">0</span>
+                    </div>
+                    <button id="logoutButton" class="btn btn--secondary btn--small">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="app-nav">
+            <!-- Tourist Navigation -->
+            <div id="touristNav" class="nav-container" style="display: none;">
+                <button class="nav-btn active" onclick="Navigation.showView('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('alerts')">
+                    <i class="fas fa-bell"></i>
+                    Alerts
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('safety')">
+                    <i class="fas fa-shield-alt"></i>
+                    Safety Tips
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('emergency')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Emergency
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('profile')">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </button>
+            </div>
+
+            <!-- Authority Navigation -->
+            <div id="authorityNav" class="nav-container" style="display: none;">
+                <button class="nav-btn active" onclick="Navigation.showView('authorityDashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('monitoringCenter')">
+                    <i class="fas fa-desktop"></i>
+                    Monitoring
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('incidentManagement')">
+                    <i class="fas fa-clipboard-list"></i>
+                    Incidents
+                </button>
+                <button class="nav-btn" onclick="Navigation.showView('reports')">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports
+                </button>
+            </div>
+        </div>
+
+        <!-- App Main Content -->
+        <div class="app-main">
+            <!-- Tourist Dashboard -->
+            <div id="dashboard" class="view active">
+                <div class="dashboard-grid">
+                    <!-- Safety Score Card -->
+                    <div class="dashboard-card safety-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-shield-alt"></i> Current Safety Score</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="safety-indicator">
+                                <div class="safety-circle high" id="safetyCircle">85</div>
+                                <p>Your current safety level</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Button Card -->
+                    <div class="dashboard-card emergency-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Emergency SOS</h4>
+                        </div>
+                        <div class="card-body">
+                            <button id="emergencyButton" class="emergency-button">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                SOS
+                            </button>
+                            <p class="emergency-text">Press in case of emergency</p>
+                        </div>
+                    </div>
+
+                    <!-- Nearby Alerts Card -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-bell"></i> Nearby Alerts</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="alertsList" class="alerts-list">
+                                <p class="loading">Loading alerts...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tourist Alerts View -->
+            <div id="alerts" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-bell"></i> Safety Alerts</h2>
+                    <p>Stay informed about safety alerts in your area</p>
+                </div>
+                <div class="alerts-container">
+                    <div id="allAlertsList" class="alerts-list">
+                        <p class="loading">Loading alerts...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Tips View -->
+            <div id="safety" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-shield-alt"></i> Safety Tips</h2>
+                    <p>Important safety guidelines for travelers</p>
+                </div>
+                <div class="safety-tips-container">
+                    <div id="safetyTips" class="tips-grid">
+                        <p class="loading">Loading safety tips...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts View -->
+            <div id="emergency" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Emergency Contacts</h2>
+                    <p>Important emergency contact numbers</p>
+                </div>
+                <div class="emergency-contacts-container">
+                    <div id="emergencyContacts" class="contacts-grid">
+                        <p class="loading">Loading emergency contacts...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile View -->
+            <div id="profile" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-user"></i> My Profile</h2>
+                    <p>Your account information and settings</p>
+                </div>
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-info">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 id="profileName">Loading...</h3>
+                            <p id="profileEmail">Loading...</p>
+                            <p id="profilePhone">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authority Dashboard -->
+            <div id="authorityDashboard" class="view">
+                <div class="dashboard-grid">
+                    <!-- Active Tourists Card -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-users"></i> Active Tourists</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="touristsList" class="tourists-list">
+                                <p class="loading">Loading tourists...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Alerts Card -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-bell"></i> Recent Alerts</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="authorityAlertsList" class="alerts-list">
+                                <p class="loading">Loading alerts...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Center View -->
+            <div id="monitoringCenter" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-desktop"></i> Monitoring Center</h2>
+                    <p>Real-time monitoring of tourist locations and activities</p>
+                </div>
+                <div class="monitoring-container">
+                    <div class="map-container">
+                        <div id="monitoringMap" class="map-placeholder">
+                            <i class="fas fa-map"></i>
+                            <p>Real-time Map View</p>
+                            <small>Tourist locations and alerts will be displayed here</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Incident Management View -->
+            <div id="incidentManagement" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Incident Management</h2>
+                    <p>Manage and respond to reported incidents</p>
+                </div>
+                <div class="incidents-container">
+                    <div id="incidentsList" class="incidents-list">
+                        <p class="loading">Loading incidents...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="reports" class="view">
+                <div class="view-header">
+                    <h2><i class="fas fa-chart-bar"></i> Reports & Analytics</h2>
+                    <p>Safety reports and statistical analysis</p>
+                </div>
+                <div class="reports-container">
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h4><i class="fas fa-chart-line"></i> Safety Trends</h4>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Safety trend analysis</p>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h4><i class="fas fa-map-marked-alt"></i> Incident Heatmap</h4>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <p>Incident location heatmap</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications" class="notifications-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // Toggle user type specific fields in registration form
+        function toggleUserTypeFields() {
+            const userType = document.getElementById('registerUserType').value;
+            const touristFields = document.getElementById('touristFields');
+            const authorityFields = document.getElementById('authorityFields');
+
+            if (userType === 'tourist') {
+                touristFields.style.display = 'block';
+                authorityFields.style.display = 'none';
+
+                // Make tourist fields required
+                document.getElementById('emergencyContact').required = true;
+                document.getElementById('idType').required = true;
+                document.getElementById('idNumber').required = true;
+
+                // Make authority fields optional
+                document.getElementById('officerID').required = false;
+                document.getElementById('department').required = false;
+                document.getElementById('jurisdiction').required = false;
+            } else if (userType === 'authority') {
+                touristFields.style.display = 'none';
+                authorityFields.style.display = 'block';
+
+                // Make authority fields required
+                document.getElementById('officerID').required = true;
+                document.getElementById('department').required = true;
+                document.getElementById('jurisdiction').required = true;
+
+                // Make tourist fields optional
+                document.getElementById('emergencyContact').required = false;
+                document.getElementById('idType').required = false;
+                document.getElementById('idNumber').required = false;
+            } else {
+                touristFields.style.display = 'none';
+                authorityFields.style.display = 'none';
+
+                // Make all fields optional
+                document.getElementById('emergencyContact').required = false;
+                document.getElementById('idType').required = false;
+                document.getElementById('idNumber').required = false;
+                document.getElementById('officerID').required = false;
+                document.getElementById('department').required = false;
+                document.getElementById('jurisdiction').required = false;
+            }
+        }
+
+        // Show appropriate UI based on user type
+        function showUserTypeUI(userType) {
+            if (userType === 'tourist') {
+                document.getElementById('touristHeader').style.display = 'flex';
+                document.getElementById('authorityHeader').style.display = 'none';
+                document.getElementById('touristNav').style.display = 'flex';
+                document.getElementById('authorityNav').style.display = 'none';
+                Navigation.showView('dashboard');
+            } else if (userType === 'authority') {
+                document.getElementById('touristHeader').style.display = 'none';
+                document.getElementById('authorityHeader').style.display = 'flex';
+                document.getElementById('touristNav').style.display = 'none';
+                document.getElementById('authorityNav').style.display = 'flex';
+                Navigation.showView('authorityDashboard');
+            }
+        }
+
+        // Override the original app initialization to show correct UI
+        const originalShowApp = AuthSystem.showApp;
+        AuthSystem.showApp = function() {
+            originalShowApp();
+            if (AppState.userType) {
+                showUserTypeUI(AppState.userType);
+            }
+        };
+
+        // Override tourist app init to show tourist UI
+        const originalTouristInit = TouristApp.init;
+        TouristApp.init = function() {
+            showUserTypeUI('tourist');
+            originalTouristInit();
+        };
+
+        // Override authority app init to show authority UI
+        const originalAuthorityInit = AuthorityApp.init;
+        AuthorityApp.init = function() {
+            showUserTypeUI('authority');
+            originalAuthorityInit();
+        };
+    </script>
+</body>
+</html>
